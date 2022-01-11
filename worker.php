@@ -11,9 +11,16 @@ $callback = function ($msg) {
     echo ' [x] Received ', $msg->body, "\n";
     sleep(substr_count($msg->body, '.'));
     echo " [x] Done\n";
+    $msg->ack();
 };
 
-$channel->basic_consume('hello', '', false, true, false, false, $callback);
+// If a consumer dies (its channel is closed, connection is closed, or TCP connection is lost) 
+// without sending an ack, RabbitMQ will understand that a message wasn't processed fully and will
+// re-queue it. If there are other consumers online at the same time, it will then quickly redeliver it 
+// to another consumer. That way you can be sure that no message is lost, even if the workers occasionally die.
+
+
+$channel->basic_consume('hello', '', false, false, false, false, $callback);
 
 while ($channel->is_open()) {
     $channel->wait();
