@@ -20,7 +20,7 @@ $callback = function ($msg) {
 // to another consumer. That way you can be sure that no message is lost, even if the workers occasionally die.
 
 
-$channel->basic_consume('hello', '', false, false, false, false, $callback);
+$channel->basic_consume('task_queue', '', false, false, false, false, $callback);
 
 while ($channel->is_open()) {
     $channel->wait();
